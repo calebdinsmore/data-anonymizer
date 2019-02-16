@@ -11,11 +11,7 @@ def anonymize():
             reader = csv.DictReader(in_file)
             writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
             writer.writeheader()
-            count = 0
             for row in reader:
-                count += 1
-                if count % 1000 == 0:
-                    print(count)
                 for column_name in config.columns_to_obfuscate:
                     if column_name not in row:
                         raise ValueError(f'{column_name} not found in CSV.')

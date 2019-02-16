@@ -1,9 +1,11 @@
 from pyhashxx import hashxx
 import faker
+from .decorators.text_formatter import apply_formatting_options
 
 
 class BaseFieldType:
-    def __init__(self):
+    def __init__(self, type_config_dict):
+        self.type_config_dict = type_config_dict
         self.faker = FakerSingleton()
 
     @staticmethod

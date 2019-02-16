@@ -4,7 +4,7 @@ from datetime import datetime
 
 class DateTime(BaseFieldType):
     def __init__(self, type_config_dict):
-        super().__init__()
+        super().__init__(type_config_dict)
         format_string = type_config_dict.get('format')
         range_start_date = type_config_dict.get('range_start_date')
         range_end_date = type_config_dict.get('range_end_date')
