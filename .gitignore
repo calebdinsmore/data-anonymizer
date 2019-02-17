@@ -4,3 +4,8 @@ __pycache__/
 *.yml
 .DS_Store
 .idea/
+
+# Python build files
+build/
+dist/
+*.egg-info/

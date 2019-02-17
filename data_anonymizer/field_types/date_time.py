@@ -2,7 +2,7 @@ from . import BaseFieldType
 from datetime import datetime
 
 
-class DateTime(BaseFieldType):
+class DateTimeField(BaseFieldType):
     def __init__(self, type_config_dict):
         super().__init__(type_config_dict)
         format_string = type_config_dict.get('format')

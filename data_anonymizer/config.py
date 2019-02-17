@@ -10,7 +10,7 @@ class Config:
             raise SecretKeyNotSetException
 
     @property
-    def columns_to_obfuscate(self) -> dict:
+    def columns_to_obfuscate(self):
         return self.config_dict.get('columns_to_obfuscate')
 
 

@@ -1,6 +1,6 @@
 from .city import City
 from .custom import Custom
-from .datetime import DateTime
+from .date_time import DateTimeField
 from .first_name import FirstName
 from .full_address import FullAddress
 from .full_name import FullName
@@ -15,7 +15,7 @@ class FieldTypeFactory:
     ACCEPTED_TYPES = {
         'city': City,
         'custom': Custom,
-        'datetime': DateTime,
+        'datetime': DateTimeField,
         'firstname': FirstName,
         'fulladdress': FullAddress,
         'fullname': FullName,
@@ -35,5 +35,5 @@ class FieldTypeFactory:
         type_value = type_config['type'].lower()
         field_type_class = FieldTypeFactory.ACCEPTED_TYPES.get(type_value)
         if field_type_class is None:
-            raise ValueError(f"Field type {type_config['type']} not accepted.")
+            raise ValueError('Field type ' + type_config['type'] + ' not accepted.')
         return field_type_class(type_config)
