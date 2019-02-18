@@ -1,4 +1,5 @@
 from . import BaseFieldType
+from .decorators import apply_formatting_options
 
 
 class Options(BaseFieldType):
@@ -9,6 +10,7 @@ class Options(BaseFieldType):
             raise ValueError('Options field type must have an options list property defined')
         self.options = options
 
+    @apply_formatting_options
     def generate_obfuscated_value(self, value):
         self.seed_faker(value)
         return self.faker.random_element(self.options)

@@ -1,6 +1,7 @@
 from . import BaseFieldType
 from .decorators.text_formatter import apply_formatting_options
 
+
 class Custom(BaseFieldType):
     def __init__(self, type_config_dict):
         super().__init__(type_config_dict)

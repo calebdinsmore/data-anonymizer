@@ -1,5 +1,6 @@
-from . import BaseFieldType
 from datetime import datetime
+from . import BaseFieldType
+from .decorators import apply_formatting_options
 
 
 class DateTimeField(BaseFieldType):
@@ -22,6 +23,7 @@ class DateTimeField(BaseFieldType):
         self.range_start_date = range_start_date
         self.range_end_date = range_end_date
 
+    @apply_formatting_options
     def generate_obfuscated_value(self, value):
         self.seed_faker(value)
         generated_date = self.faker.date_time_between_dates(self.range_start_date, self.range_end_date)
