@@ -5,6 +5,7 @@ import csv
 import os
 from data_anonymizer.config import Config
 from data_anonymizer.field_types.field_type_factory import FieldTypeFactory
+from data_anonymizer.config_generator import generate_yaml_config
 
 
 def exit_with_message(message, code):
@@ -33,14 +34,22 @@ def anonymize(config_file, in_filename, out_filename):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('file', help='File to anonymize')
-    parser.add_argument('--config', help='YAML config file (required) specifying how to anonymize the data.'
-                                         ' Generate one with the --generate-config flag')
-    parser.add_argument('--generate-config', help='Generate config file based on CSV provided')
+    parser.add_argument('--config', '-c', help='YAML config file (required) specifying how to anonymize the data.'
+                                               ' Generate one with the --generate-config flag')
+    parser.add_argument('--generate-config', '-g', action='store_true', help='Generate config file based on CSV provided')
+    parser.add_argument('--has-header',
+                        action='store_true',
+                        default=True,
+                        help='Specify if a header is present. Defaults to true.')
+    parser.add_argument('--keygen', '-k', action='store_true', help='Generates a key file to use.')
     parser.add_argument('--outfile', '-o', help='Name/path of file to output (defaults to anonymized-INFILE_NAME')
 
     args = parser.parse_args()
     if not os.path.isfile(args.file):
         exit_with_message('No such file: ' + args.file, 1)
+    if args.generate_config:
+        generate_yaml_config(args.file, args.keygen, args.has_header)
+        return
     if not args.outfile:
         outfile = 'anonymized-' + args.file
     else:

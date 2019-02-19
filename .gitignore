@@ -4,6 +4,7 @@ __pycache__/
 *.yml
 .DS_Store
 .idea/
+*.key
 
 # Python build files
 build/

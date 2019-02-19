@@ -8,9 +8,10 @@ verify_ssl = true
 [packages]
 faker = "*"
 ipython = "*"
-pyyaml = "*"
 wheel = "*"
 pyhashxx = "*"
+ruamel-yaml = "*"
+datefinder = "*"
 
 [requires]
 python_version = "3.6"
