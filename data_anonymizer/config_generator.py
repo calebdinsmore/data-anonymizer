@@ -3,9 +3,7 @@ import dateutil.parser as date_parser
 from .config import Config
 
 
-def generate_yaml_config(data_file, generate_key_file, has_header):
-    if generate_key_file:
-        pass
+def generate_yaml_config(data_file, has_header):
     data_dict = build_data_dictionary(data_file, has_header)
     new_config = Config()
     for column in data_dict:

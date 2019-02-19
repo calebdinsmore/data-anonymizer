@@ -65,7 +65,7 @@ def main():
     if not os.path.isfile(args.file):
         exit_with_message('No such file: ' + args.file, 1)
     if args.generate_config:
-        generate_yaml_config(args.file, args.keygen, args.has_header)
+        generate_yaml_config(args.file, args.has_header)
         return
     if not args.config:
         parser.print_help()
