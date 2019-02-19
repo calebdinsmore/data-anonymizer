@@ -3,9 +3,39 @@
 import argparse
 import csv
 import os
+import logging
 from data_anonymizer.config import Config
 from data_anonymizer.field_types.field_type_factory import FieldTypeFactory
 from data_anonymizer.config_generator import generate_yaml_config
+
+
+DEFAULT_KEY_FILE = 'anonymizer.key'
+
+
+def anonymize(config, in_filename, out_filename):
+    with open(in_filename) as in_file:
+        with open(out_filename, 'w') as out_file:
+            reader = csv.DictReader(in_file)
+            writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
+            writer.writeheader()
+            for row in reader:
+                for column_name in config.columns_to_anonymize:
+                    if column_name not in row:
+                        raise ValueError(column_name + ' not found in CSV.')
+                    type_config_dict = config.columns_to_anonymize[column_name]
+                    field_type = FieldTypeFactory.get_type(type_config_dict)
+                    if field_type is not None and row[column_name] is not None:
+                        row[column_name] = field_type.generate_obfuscated_value(config.secret_key + row[column_name])
+                writer.writerow(row)
+
+
+def keygen():
+    import random
+    import string
+    with open(DEFAULT_KEY_FILE, 'w') as key_file:
+        # Generate random alphanumeric key of length 15
+        key = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(15))
+        key_file.write(key)
 
 
 def exit_with_message(message, code):
@@ -13,25 +43,12 @@ def exit_with_message(message, code):
     exit(code)
 
 
-def anonymize(config_file, in_filename, out_filename):
-    config = Config(config_file)
-    with open(in_filename) as in_file:
-        with open(out_filename, 'w') as out_file:
-            reader = csv.DictReader(in_file)
-            writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
-            writer.writeheader()
-            for row in reader:
-                for column_name in config.columns_to_obfuscate:
-                    if column_name not in row:
-                        raise ValueError(column_name + ' not found in CSV.')
-                    type_config_dict = config.columns_to_obfuscate[column_name]
-                    field_type = FieldTypeFactory.get_type(type_config_dict)
-                    if field_type is not None and row[column_name] is not None:
-                        row[column_name] = field_type.generate_obfuscated_value(config.secret_key + row[column_name])
-                writer.writerow(row)
+def get_logger():
+    return logging.getLogger('data-anonymizer')
 
 
 def main():
+    get_logger().setLevel(logging.WARNING)
     parser = argparse.ArgumentParser()
     parser.add_argument('file', help='File to anonymize')
     parser.add_argument('--config', '-c', help='YAML config file (required) specifying how to anonymize the data.'
@@ -41,7 +58,7 @@ def main():
                         action='store_true',
                         default=True,
                         help='Specify if a header is present. Defaults to true.')
-    parser.add_argument('--keygen', '-k', action='store_true', help='Generates a key file to use.')
+    parser.add_argument('--key-file', help='Specify the file to get the key from.')
     parser.add_argument('--outfile', '-o', help='Name/path of file to output (defaults to anonymized-INFILE_NAME')
 
     args = parser.parse_args()
@@ -50,11 +67,17 @@ def main():
     if args.generate_config:
         generate_yaml_config(args.file, args.keygen, args.has_header)
         return
-    if not args.outfile:
-        outfile = 'anonymized-' + args.file
-    else:
-        outfile = args.outfile
     if not args.config:
         parser.print_help()
         exit_with_message('ERROR: Specify a YAML config file with --config.', 1)
-    anonymize(args.config, args.file, outfile)
+    outfile = args.outfile
+    key_file = args.key_file
+    if not args.outfile:
+        outfile = 'anonymized-' + args.file
+    if not args.key_file:
+        get_logger().warning('Key file not specified. Generating and using %s file', DEFAULT_KEY_FILE)
+        get_logger().warning('Make sure to use this key file when anonymizing other data sets.')
+        keygen()
+        key_file = DEFAULT_KEY_FILE
+    config = Config(args.config, key_file)
+    anonymize(config, args.file, outfile)

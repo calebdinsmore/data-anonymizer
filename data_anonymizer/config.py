@@ -4,10 +4,10 @@ import logging
 
 
 class Config:
-    def __init__(self, yaml_path=None, key_file_path=None, suppress_key_warn=False):
+    def __init__(self, yaml_path=None, key_file_path=None):
         if yaml_path is not None:
             with open(yaml_path) as config_file:
-                self.config_dict = yaml.load(config_file)
+                self.config_dict = yaml.load(config_file, Loader=yaml.Loader)
         else:
             self.config_dict = CommentedMap()
             self.config_dict['columns_to_anonymize'] = {}
@@ -15,8 +15,6 @@ class Config:
             with open(key_file_path) as key_file:
                 self.secret_key = key_file.read().strip()
         else:
-            if not suppress_key_warn:
-                self.logger.warning('Secret key not provided. Using default key.')
             self.secret_key = 'default-key'
 
     @property
@@ -24,7 +22,7 @@ class Config:
         return logging.getLogger('config')
 
     @property
-    def columns_to_obfuscate(self):
+    def columns_to_anonymize(self):
         return self.config_dict.get('columns_to_anonymize')
 
     def add_column_config(self, column_name, column_config_dict):
@@ -40,6 +38,3 @@ class Config:
 
 class SecretKeyNotSetException(Exception):
     pass
-
-
-# print(ObfuscationConfiguration('example-conf.yml').columns_to_obfuscate)

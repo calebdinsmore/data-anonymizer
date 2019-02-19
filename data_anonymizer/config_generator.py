@@ -7,7 +7,7 @@ def generate_yaml_config(data_file, generate_key_file, has_header):
     if generate_key_file:
         pass
     data_dict = build_data_dictionary(data_file, has_header)
-    new_config = Config(suppress_key_warn=True)
+    new_config = Config()
     for column in data_dict:
         column_config = get_best_column_config_for_column(data_dict[column])
         if column_config is None:
