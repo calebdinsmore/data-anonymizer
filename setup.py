@@ -19,7 +19,7 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     install_requires=[
         'faker',
-        'ruamel-yaml',
+        'ruamel.yaml',
         'pyhashxx',
     ],
     classifiers=[
