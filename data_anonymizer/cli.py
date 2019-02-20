@@ -4,6 +4,7 @@ import argparse
 import csv
 import os
 import logging
+from timeit import default_timer as timer
 from data_anonymizer.config import Config
 from data_anonymizer.field_types.field_type_factory import FieldTypeFactory
 from data_anonymizer.config_generator import generate_yaml_config
@@ -12,16 +13,20 @@ from data_anonymizer.config_generator import generate_yaml_config
 DEFAULT_KEY_FILE = 'anonymizer.key'
 
 
-def anonymize(config, in_filename, out_filename):
+def anonymize(config, in_filename, out_filename, has_header):
     with open(in_filename) as in_file:
         with open(out_filename, 'w') as out_file:
-            reader = csv.DictReader(in_file)
-            writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
-            writer.writeheader()
+            if has_header:
+                reader = csv.DictReader(in_file)
+                writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
+                writer.writeheader()
+            else:
+                reader = csv.reader(in_file)
+                writer = csv.writer(out_file)
             for row in reader:
                 for column_name in config.columns_to_anonymize:
-                    if column_name not in row:
-                        raise ValueError(column_name + ' not found in CSV.')
+                    if column_name not in row and has_header:
+                        raise ValueError(str(column_name) + ' not found in CSV.')
                     type_config_dict = config.columns_to_anonymize[column_name]
                     field_type = FieldTypeFactory.get_type(type_config_dict)
                     if field_type is not None and row[column_name] is not None:
@@ -54,18 +59,19 @@ def main():
     parser.add_argument('--config', '-c', help='YAML config file (required) specifying how to anonymize the data.'
                                                ' Generate one with the --generate-config flag')
     parser.add_argument('--generate-config', '-g', action='store_true', help='Generate config file based on CSV provided')
-    parser.add_argument('--has-header',
+    parser.add_argument('--no-header',
                         action='store_true',
-                        default=True,
-                        help='Specify if a header is present. Defaults to true.')
+                        help='Specify if a header is not present.')
     parser.add_argument('--key-file', help='Specify the file to get the key from.')
     parser.add_argument('--outfile', '-o', help='Name/path of file to output (defaults to anonymized-INFILE_NAME')
 
     args = parser.parse_args()
+
+    has_header = not args.no_header
     if not os.path.isfile(args.file):
         exit_with_message('No such file: ' + args.file, 1)
     if args.generate_config:
-        generate_yaml_config(args.file, args.has_header)
+        generate_yaml_config(args.file, has_header)
         return
     if not args.config:
         parser.print_help()
@@ -74,10 +80,12 @@ def main():
     key_file = args.key_file
     if not args.outfile:
         outfile = 'anonymized-' + args.file
-    if not args.key_file:
+    if not args.key_file and not os.path.isfile(DEFAULT_KEY_FILE):
         get_logger().warning('Key file not specified. Generating and using %s file', DEFAULT_KEY_FILE)
         get_logger().warning('Make sure to use this key file when anonymizing other data sets.')
         keygen()
         key_file = DEFAULT_KEY_FILE
+    elif os.path.isfile(DEFAULT_KEY_FILE):
+        key_file = DEFAULT_KEY_FILE
     config = Config(args.config, key_file)
-    anonymize(config, args.file, outfile)
+    anonymize(config, args.file, outfile, has_header)

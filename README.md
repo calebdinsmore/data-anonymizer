@@ -11,7 +11,7 @@ Data Anonymizer is a tool that helps you anonymize data you're working with and 
 ## Usage
 
 ```
-usage: data-anonymizer [-h] [--config CONFIG] [--generate-config] [--has-header]
+usage: data-anonymizer [-h] [--config CONFIG] [--generate-config] [--no-header]
                        [--key-file KEY_FILE] [--outfile OUTFILE]
                        file
 
@@ -26,7 +26,7 @@ optional arguments:
                         config flag
   --generate-config, -g
                         Generate config file based on CSV provided
-  --has-header          Specify if a header is present. Defaults to true.
+  --no-header           Specify if a header is not present.
   --key-file KEY_FILE   Specify the file to get the key from.
   --outfile OUTFILE, -o OUTFILE
                         Name/path of file to output (defaults to anonymized-
@@ -38,7 +38,7 @@ optional arguments:
 This tool accepts three things:
 
 - A key file
-    - If one is not supplied, the tool generates one and saves it to `anonymizer.key`
+    - If one is not supplied, the tool generates one and saves it to `anonymizer.key` or uses it if it is present in the current working directory
 - A config file (YAML)
     - You can generate one for your data using `--generate-config`
 - A data set to anonymize (only accepts CSV at the moment)
@@ -90,7 +90,12 @@ Because of this, the shape of the data is preserved, and any columns that contai
 
 ## Configuration Column Types
 
-These are the different available types and the different attributes each recognizes:
+These are the different available types and the different attributes each recognizes. Each column type that produces output containing or potentially containing alphabetical characters also accepts the following attributes:
+
+- `upper`
+    - Set to `true` to uppercase the generated value for a given column
+- `lower`
+    - Set to `true` to lowercase the generated value for a given column
 
 ### city
 
