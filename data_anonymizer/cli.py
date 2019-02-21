@@ -17,11 +17,11 @@ def anonymize(config, in_filename, out_filename, has_header):
         with open(out_filename, 'w') as out_file:
             if has_header:
                 reader = csv.DictReader(in_file, delimiter=config.delimiter)
-                writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
+                writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames, delimiter=config.delimiter)
                 writer.writeheader()
             else:
                 reader = csv.reader(in_file, delimiter=config.delimiter)
-                writer = csv.writer(out_file)
+                writer = csv.writer(out_file, delimiter=config.delimiter)
             for row in reader:
                 for column_name in config.columns_to_anonymize:
                     if column_name not in row and has_header:
