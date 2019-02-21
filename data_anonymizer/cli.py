@@ -4,7 +4,6 @@ import argparse
 import csv
 import os
 import logging
-from timeit import default_timer as timer
 from data_anonymizer.config import Config
 from data_anonymizer.field_types.field_type_factory import FieldTypeFactory
 from data_anonymizer.config_generator import generate_yaml_config
@@ -17,11 +16,11 @@ def anonymize(config, in_filename, out_filename, has_header):
     with open(in_filename) as in_file:
         with open(out_filename, 'w') as out_file:
             if has_header:
-                reader = csv.DictReader(in_file)
+                reader = csv.DictReader(in_file, delimiter=config.delimiter)
                 writer = csv.DictWriter(out_file, fieldnames=reader.fieldnames)
                 writer.writeheader()
             else:
-                reader = csv.reader(in_file)
+                reader = csv.reader(in_file, delimiter=config.delimiter)
                 writer = csv.writer(out_file)
             for row in reader:
                 for column_name in config.columns_to_anonymize:
@@ -58,6 +57,7 @@ def main():
     parser.add_argument('file', help='File to anonymize')
     parser.add_argument('--config', '-c', help='YAML config file (required) specifying how to anonymize the data.'
                                                ' Generate one with the --generate-config flag')
+    parser.add_argument('--delimiter', '-d', default=',', help='Specify delimiter the CSV uses (defaults to ",")')
     parser.add_argument('--generate-config', '-g', action='store_true', help='Generate config file based on CSV provided')
     parser.add_argument('--no-header',
                         action='store_true',
@@ -71,7 +71,7 @@ def main():
     if not os.path.isfile(args.file):
         exit_with_message('No such file: ' + args.file, 1)
     if args.generate_config:
-        generate_yaml_config(args.file, has_header)
+        generate_yaml_config(args.file, has_header, args.delimiter)
         return
     if not args.config:
         parser.print_help()
@@ -87,5 +87,5 @@ def main():
         key_file = DEFAULT_KEY_FILE
     elif os.path.isfile(DEFAULT_KEY_FILE):
         key_file = DEFAULT_KEY_FILE
-    config = Config(args.config, key_file)
+    config = Config(args.config, key_file, delimiter=args.delimiter)
     anonymize(config, args.file, outfile, has_header)

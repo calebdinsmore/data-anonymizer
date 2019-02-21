@@ -3,9 +3,9 @@ import dateutil.parser as date_parser
 from .config import Config
 
 
-def generate_yaml_config(data_file, no_header):
-    data_dict = build_data_dictionary(data_file, no_header)
-    new_config = Config()
+def generate_yaml_config(data_file, has_header, delimiter):
+    data_dict = build_data_dictionary(data_file, has_header, delimiter)
+    new_config = Config(delimiter=delimiter)
     for column in data_dict:
         column_config = get_best_column_config_for_column(data_dict[column])
         if column_config is None:
@@ -15,23 +15,23 @@ def generate_yaml_config(data_file, no_header):
     new_config.save_config(save_name=config_file_name)
 
 
-def build_data_dictionary(data_file, no_header):
+def build_data_dictionary(data_file, has_header, delimiter):
     """
     Builds a dictionary where the keys are the columns in the CSV, and the values are lists of that column's values
     :param data_file: str
-    :param no_header: boolean
+    :param has_header: boolean
     :return: dict
     """
     data_dict = {}
     with open(data_file) as in_file:
         column_names = []
-        if no_header:
-            reader = csv.reader(in_file)
-        else:
-            reader = csv.DictReader(in_file)
+        if has_header:
+            reader = csv.DictReader(in_file, delimiter=delimiter)
             column_names = reader.fieldnames
             for column in column_names:
                 data_dict[column] = []
+        else:
+            reader = csv.reader(in_file, delimiter=delimiter)
         for row in reader:
             if not column_names:
                 column_names = list(range(len(row)))

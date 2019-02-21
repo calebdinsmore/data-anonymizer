@@ -11,8 +11,9 @@ Data Anonymizer is a tool that helps you anonymize data you're working with and 
 ## Usage
 
 ```
-usage: data-anonymizer [-h] [--config CONFIG] [--generate-config] [--no-header]
-                       [--key-file KEY_FILE] [--outfile OUTFILE]
+usage: data-anomymizer [-h] [--config CONFIG] [--delimiter DELIMITER]
+                       [--generate-config] [--no-header] [--key-file KEY_FILE]
+                       [--outfile OUTFILE]
                        file
 
 positional arguments:
@@ -24,6 +25,8 @@ optional arguments:
                         YAML config file (required) specifying how to
                         anonymize the data. Generate one with the --generate-
                         config flag
+  --delimiter DELIMITER, -d DELIMITER
+                        Specify delimiter the CSV uses (defaults to ",")
   --generate-config, -g
                         Generate config file based on CSV provided
   --no-header           Specify if a header is not present.
@@ -46,6 +49,7 @@ This tool accepts three things:
 The config file should specify how to anonymize the data in each of the CSV's columns. It should look something like this:
 
 ```yaml
+delimiter: ','
 columns_to_anonymize:
   FirstName:
     type: first_name
