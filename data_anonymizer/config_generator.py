@@ -49,7 +49,7 @@ def get_best_column_config_for_column(column_values):
     column_config = get_date_time_config_if_dates_found(column_values)
     if column_config:
         return column_config
-    column_config = get_options_config_if_fewer_than_ten(column_values)
+    column_config = get_options_config_if_fewer_than_five_hundred(column_values)
     if column_config:
         return column_config
     return get_default_custom_column_config(column_values)
@@ -95,9 +95,9 @@ def get_matched_date(value):
         return
 
 
-def get_options_config_if_fewer_than_ten(column_values):
+def get_options_config_if_fewer_than_five_hundred(column_values):
     """
-    If there are fewer than 10 unique values for a column, return an Options configuration dictionary
+    If there are fewer than 500 unique values for a column, return an Options configuration dictionary
     :param column_values:
     :return:
     """
@@ -105,7 +105,7 @@ def get_options_config_if_fewer_than_ten(column_values):
     for value in column_values:
         unique_dict[value] = True
     uniques = list(unique_dict.keys())
-    if len(unique_dict.values()) < 10:
+    if len(unique_dict.values()) < 500:
         return {
             'type': 'options',
             'options': uniques
