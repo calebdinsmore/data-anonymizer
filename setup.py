@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="data_anonymizer",
-    version="0.1.6",
+    version="0.1.7",
     author="Caleb Dinsmore",
     author_email="caleb.dinsmore@edusource.us",
     description="A tool to anonymize data within a CSV",
