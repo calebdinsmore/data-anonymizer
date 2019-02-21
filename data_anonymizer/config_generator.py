@@ -1,6 +1,7 @@
 import csv
 import dateutil.parser as date_parser
 from .config import Config
+import logging
 
 
 def generate_yaml_config(data_file, has_header, delimiter):
@@ -15,11 +16,16 @@ def generate_yaml_config(data_file, has_header, delimiter):
     new_config.save_config(save_name=config_file_name)
 
 
+def get_logger():
+    return logging.getLogger('config_generator')
+
+
 def build_data_dictionary(data_file, has_header, delimiter):
     """
     Builds a dictionary where the keys are the columns in the CSV, and the values are lists of that column's values
     :param data_file: str
     :param has_header: boolean
+    :param delimiter: str
     :return: dict
     """
     data_dict = {}
@@ -93,6 +99,8 @@ def get_matched_date(value):
         return date_parser.parse(value)
     except ValueError:
         return
+    except OverflowError:
+        get_logger().debug('Got overflow error trying to match %s', value)
 
 
 def get_options_config_if_fewer_than_five_hundred(column_values):

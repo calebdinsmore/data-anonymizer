@@ -62,10 +62,14 @@ def main():
     parser.add_argument('--no-header',
                         action='store_true',
                         help='Specify if a header is not present.')
-    parser.add_argument('--key-file', help='Specify the file to get the key from.')
+    parser.add_argument('--key-file', '-k', help='Specify the file to get the key from.')
     parser.add_argument('--outfile', '-o', help='Name/path of file to output (defaults to anonymized-INFILE_NAME')
+    parser.add_argument('--verbose', '-v', action='store_true', help='Show verbose debug info')
 
     args = parser.parse_args()
+
+    if args.verbose:
+        get_logger().setLevel(logging.DEBUG)
 
     has_header = not args.no_header
     if not os.path.isfile(args.file):
