@@ -8,8 +8,8 @@ class CustomAddress(BaseFieldType):
         self.format_string = type_config_dict.get('format')
 
     @apply_formatting_options
-    def generate_obfuscated_value(self, value):
-        self.seed_faker(value)
+    def generate_obfuscated_value(self, key, value):
+        self.seed_faker(key, value)
         if not self.format_string:
             return self.faker.address()
         else:

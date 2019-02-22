@@ -2,8 +2,8 @@ from . import BaseFieldType
 
 
 class FloatRange(BaseFieldType):
-    def generate_obfuscated_value(self, value):
-        self.seed_faker(value)
+    def generate_obfuscated_value(self, key, value):
+        self.seed_faker(key, value)
         if self.type_config_dict.get('start') is None:
             raise ValueError('"start" must be defined in config for FloatRange column types.')
         if self.type_config_dict.get('end') is None:
