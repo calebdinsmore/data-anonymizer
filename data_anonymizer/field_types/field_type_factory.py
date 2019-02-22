@@ -3,12 +3,14 @@ from .custom import Custom
 from .custom_address import CustomAddress
 from .custom_name import CustomName
 from .date_time import DateTimeField
+from .email_address import EmailAddress
 from .first_name import FirstName
 from .float_range import FloatRange
 from .full_address import FullAddress
 from .full_name import FullName
 from .int_range import IntRange
 from .last_name import LastName
+from .normal_int import NormalInt
 from .options import Options
 from .ssn import SSN
 from .street_address import StreetAddress
@@ -22,12 +24,14 @@ class FieldTypeFactory:
         'custom_address': CustomAddress,
         'custom_name': CustomName,
         'datetime': DateTimeField,
+        'email_address': EmailAddress,
         'first_name': FirstName,
         'float_range': FloatRange,
         'full_address': FullAddress,
         'full_name': FullName,
         'int_range': IntRange,
         'last_name': LastName,
+        'normal_int': NormalInt,
         'options': Options,
         'ssn': SSN,
         'street_address': StreetAddress,

@@ -11,6 +11,7 @@ class DateTimeField(BaseFieldType):
         range_start_date = type_config_dict.get('range_start_date')
         range_end_date = type_config_dict.get('range_end_date')
         self.preserve_year = type_config_dict.get('preserve_year')
+        self.safe_harbor = type_config_dict.get('safe_harbor')
         if not format_string or not isinstance(format_string, str):
             raise ValueError('DateTime field types must have a format defined of type string')
         self.format_string = format_string
@@ -35,4 +36,7 @@ class DateTimeField(BaseFieldType):
                 generated_date = generated_date.replace(value_year)
             except ValueError:
                 self.get_logger().warning('Could not parse year from %s. Unable to preserve year.', value)
+        if self.safe_harbor and abs(generated_date.year - datetime.today().year) >= 90:
+            year_delta_150 = datetime.today().year - 150
+            generated_date = generated_date.replace(year=year_delta_150)
         return generated_date.strftime(self.format_string)
