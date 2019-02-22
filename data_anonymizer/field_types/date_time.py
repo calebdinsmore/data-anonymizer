@@ -32,8 +32,10 @@ class DateTimeField(BaseFieldType):
         generated_date = self.faker.date_time_between_dates(self.range_start_date, self.range_end_date)
         if self.preserve_year:
             try:
+                if generated_date.month == 2 and generated_date.day == 29:
+                    generated_date = generated_date.replace(month=3)
                 value_year = date_parser.parse(value).year
-                generated_date = generated_date.replace(value_year)
+                generated_date = generated_date.replace(year=value_year)
             except ValueError:
                 self.get_logger().warning('Could not parse year from %s. Unable to preserve year.', value)
         if self.safe_harbor and abs(generated_date.year - datetime.today().year) >= 90:
