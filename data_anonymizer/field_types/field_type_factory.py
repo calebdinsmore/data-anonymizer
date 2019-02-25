@@ -12,6 +12,7 @@ from .int_range import IntRange
 from .last_name import LastName
 from .normal_int import NormalInt
 from .options import Options
+from .safe_harbor_age import SafeHarborAge
 from .ssn import SSN
 from .street_address import StreetAddress
 from .zip import Zip
@@ -33,6 +34,7 @@ class FieldTypeFactory:
         'last_name': LastName,
         'normal_int': NormalInt,
         'options': Options,
+        'safe_harbor_age': SafeHarborAge,
         'ssn': SSN,
         'street_address': StreetAddress,
         'zip': Zip,
