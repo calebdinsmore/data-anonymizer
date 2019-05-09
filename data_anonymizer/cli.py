@@ -84,12 +84,11 @@ def main():
     key_file = args.key_file
     if not args.outfile:
         outfile = 'anonymized-' + args.file
-    if not args.key_file and not os.path.isfile(DEFAULT_KEY_FILE):
-        get_logger().warning('Key file not specified. Generating and using %s file', DEFAULT_KEY_FILE)
-        get_logger().warning('Make sure to use this key file when anonymizing other data sets.')
-        keygen()
-        key_file = DEFAULT_KEY_FILE
-    elif os.path.isfile(DEFAULT_KEY_FILE):
+    if not args.key_file: 
+        if not os.path.isfile(DEFAULT_KEY_FILE):
+            get_logger().warning('Key file not specified. Generating and using %s file', DEFAULT_KEY_FILE)
+            get_logger().warning('Make sure to use this key file when anonymizing other data sets.')
+            keygen()
         key_file = DEFAULT_KEY_FILE
     config = Config(args.config, key_file, delimiter=args.delimiter)
     anonymize(config, args.file, outfile, has_header)
