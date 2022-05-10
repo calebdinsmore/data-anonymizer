@@ -28,7 +28,7 @@ def anonymize(config, in_filename, out_filename, has_header):
                         raise ValueError(str(column_name) + ' not found in CSV.')
                     type_config_dict = config.columns_to_anonymize[column_name]
                     field_type = FieldTypeFactory.get_type(type_config_dict)
-                    if field_type is not None and row[column_name] is not None and row[column_name] is not '':
+                    if field_type is not None and row[column_name] is not None and row[column_name] != '':
                         row[column_name] = field_type.generate_obfuscated_value(config.secret_key, row[column_name])
                 writer.writerow(row)
 

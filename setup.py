@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="data_anonymizer",
-    version="0.2.4",
+    version="0.3.0",
     author="Caleb Dinsmore",
     author_email="caleb.dinsmore@edusource.us",
     description="A tool to anonymize data within a CSV",
@@ -20,7 +20,7 @@ setuptools.setup(
     install_requires=[
         'faker',
         'ruamel.yaml',
-        'pyhashxx',
+        'xxhash',
     ],
     classifiers=[
         "Programming Language :: Python :: 3",

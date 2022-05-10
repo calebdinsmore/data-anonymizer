@@ -1,5 +1,5 @@
 import logging
-from pyhashxx import hashxx
+import xxhash
 import faker
 from .decorators.text_formatter import apply_formatting_options
 
@@ -12,7 +12,7 @@ class BaseFieldType:
     @staticmethod
     def generate_seed(key, value):
         combination = key + value
-        value = hashxx(combination.encode())
+        value = xxhash.xxh64(combination.encode()).hexdigest()
         return value
 
     @staticmethod
@@ -21,7 +21,7 @@ class BaseFieldType:
 
     def seed_faker(self, key, field_value):
         seed = BaseFieldType.generate_seed(key, field_value)
-        self.faker.seed(seed)
+        faker.Faker.seed(seed)
 
     def generate_obfuscated_value(self, key, value):
         raise NotImplementedError
